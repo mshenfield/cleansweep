@@ -1,0 +1,25 @@
+[[source]]
+
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+name = "pypi"
+
+
+[dev-packages]
+
+ipython = "*"
+"e1839a8" = {path = ".", editable = true}
+pytest = "*"
+ipdb = "*"
+
+
+[packages]
+
+requests = "*"
+websockets = "*"
+attrs = "*"
+
+
+[requires]
+
+python_version = "3.6"
