@@ -20,7 +20,9 @@ setup(
         exclude=['tests'],
     ),
     install_requires=[
-        'websockets',
+        'attrs',
+        'ratelimiter',
+        'socketIO_client',
     ],
     extras_require={  # Optional
         'dev': ['ipython', 'ipdb'],

@@ -15,10 +15,9 @@ ipdb = "*"
 
 [packages]
 
-requests = "*"
-websockets = "*"
 attrs = "*"
 ratelimiter = "*"
+socketio-client = "*"
 
 
 [requires]

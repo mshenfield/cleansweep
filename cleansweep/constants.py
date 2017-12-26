@@ -10,10 +10,12 @@ ESTIMATED_TRADE_TXN_FEE_ETHER = Decimal('.0004')
 
 ETHER_TOKEN_ADDRESS = '0x0000000000000000000000000000000000000000'
 
-ETHERDELTA_WS_URI = 'wss://socket.etherdelta.com/socket.io/?transport=websocket'
+ETHERDELTA_SOCKET_API_HOST = 'socket.etherdelta.com'
 # From https://github.com/etherdelta/etherdelta.github.io/blob/master/docs/API.md#user-content-rate-limit
 # This is intentionally lower than the listed limit to avoid getting blocked
 ETHERDELTA_REQUESTS_PER_MINUTE = 10
+
+GET_MARKET = 'getMarket'
 
 # string of the 'getMarket' event response
 MARKET_EVENT_NAME = 'market'

@@ -1,4 +1,4 @@
-from cleansweep import get_sweeps_by_token
+from cleansweep import run_client
 
 def test_cleansweep():
-    get_sweeps_by_token()
+    run_client()
