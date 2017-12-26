@@ -18,22 +18,21 @@ class SocketIOClient(websockets.WebSocketClientProtocol):
     """
     SOCKET_IO_CONSTANT = '42'
 
-    async def keepalive(self, ping_interval=3):
-        """Periodically ping the server to prevent the connection from timing out.
+    # async def keepalive(self, ping_interval=3):
+    #     """Periodically ping the server to prevent the connection from timing out.
+    #
+    #     Params:
+    #         `ping_interval`: number of seconds between each ping.
+    #
+    #     SocketIO kills client connections after a pre-configured timeout.  Pings by
+    #     default occur every 3 seconds.  The snippet itself is copied from
+    #     http://websockets.readthedocs.io/en/stable/cheatsheet.html#keeping-connections-open
+    #     """
+    #     while True:
+    #         await self.ping()
+    #         await asyncio.sleep(ping_interval)
 
-        Params:
-            `ping_interval`: number of seconds between each ping.
-
-        SocketIO kills client connections after a pre-configured timeout.  Pings by
-        default occur every 3 seconds.  The snippet itself is copied from
-        http://websockets.readthedocs.io/en/stable/cheatsheet.html#keeping-connections-open
-        """
-        while True:
-            await self.ping()
-            await asyncio.sleep(ping_interval)
-
-    @asyncio.coroutine
-    def send(self, data, **event_params):
+    async def send(self, data, **event_params):
         """Automatically prepend the socket.io constant and encode data appropriately
 
         Extends `send` to accept keyword arguments, which are JSON encoded.
@@ -43,14 +42,13 @@ class SocketIOClient(websockets.WebSocketClientProtocol):
             constant=self.SOCKET_IO_CONSTANT,
             payload=json.dumps(socket_io_payload),
         )
-        yield from super(SocketIOClient, self).send(data=socket_io_data)
+        return await super(SocketIOClient, self).send(data=socket_io_data)
 
-    @asyncio.coroutine
-    def recv(self, json_loads_kwargs=None):
+    async def recv(self, json_loads_kwargs=None):
         """Automatically strip the SOCKET_IO_CONSTANT and parse returned message to a python object"""
         message = ''
         while self.SOCKET_IO_CONSTANT not in message:
-            message = yield from super(SocketIOClient, self).recv()
+            message = await super(SocketIOClient, self).recv()
 
         socket_io_message = message[len(self.SOCKET_IO_CONSTANT):]
         return json.loads(socket_io_message, **json_loads_kwargs)

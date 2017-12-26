@@ -46,8 +46,22 @@ class EtherDeltaClient(SocketIOClient):
 
         return websockets.connect(cls.URI, create_protocol=cls, **kwargs)
 
-    async def get_market(self, token_address=None, user_address=None):
-        """Call the `getMarket` API and return the response by polling the socket API"""
+    async def listen(self, handler):
+        # self.keepalive()
+
+        async for data in self:
+            if data is None:
+                continue
+            else:
+                event, message = data
+                await handler(event, message)
+
+    async def recv(self):
+        """Harcode in parsing floats as Decimals for the EtherDelta client"""
+        await super(EtherDeltaClient, self).recv(json_loads_kwargs={'parse_float': Decimal})
+
+    async def emit_get_market(self, token_address=None, user_address=None):
+        """Emit a `getMarket` call to the API"""
         kwargs = {}
         if token_address is not None:
             kwargs['token'] = token_address
@@ -55,54 +69,3 @@ class EtherDeltaClient(SocketIOClient):
             kwargs['user_address'] = user_address
 
         await self.send('getMarket', **kwargs)
-
-        while True:
-            event, market = await self.recv(json_loads_kwargs={'parse_float': Decimal})
-            market_is_empty = not market
-            if event != MARKET_EVENT_NAME:
-                logger.debug('Skipping non-market event response "{}"'.format(event))
-                continue
-
-            # XXX: Periodically this seems to come back empty, we skip and try again
-            if not market:
-                logger.debug('Skipping empty market event response')
-                continue
-
-            return market
-
-    async def get_orders_for_token(self, token_address):
-        """Get open orders for the token at `token_addres`
-
-        Returns the `MARKET_ORDERS_KEY` value of the `getMarket` API response.
-        """
-        market = {}
-        while MARKET_ORDERS_KEY not in market:
-            market = await self.get_market(token_address=token_address)
-
-        token_orders = market[MARKET_ORDERS_KEY]
-        sample_api_order = safe_choice(
-            token_orders[MARKET_ORDERS_BUY_KEY] + token_orders[MARKET_ORDERS_SELL_KEY]
-        )
-        sample_order = sample_api_order and EthOrder.from_api_order(sample_api_order)
-        token_mismatch = (
-            sample_order and
-            sample_order.token_address != token_address
-        )
-        if token_mismatch:
-            raise ValueError(
-                'Received response for different token. Expected {}, Actual {}'.format(
-                    token_address,
-                    sample_order.token_address,
-                )
-            )
-        return token_orders
-
-    async def get_token_summaries(self):
-        """Retreive a mapping of tokens to a summary of order activity on EtherDelta.
-
-        This returns the MARKET_TICKERS_KEY key from response of the `getMarket` socket API call.
-        """
-        market = await self.get_market()
-        if MARKET_TICKERS_KEY not in market:
-            raise ValueError('Got market with no ticker summaries: {}'.format(market))
-        return market[MARKET_TICKERS_KEY]

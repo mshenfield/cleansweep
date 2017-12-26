@@ -171,7 +171,7 @@ class Sweep:
         return self.buy.token_address == self.sell.token_address
 
     @classmethod
-    def sweeps_from_orders(cls, orders):
+    def sweeps_from_get_market_orders(cls, orders):
         """Returns a list of profitable `Sweep` objects from the `getMarket` orders API response
 
         Params:
