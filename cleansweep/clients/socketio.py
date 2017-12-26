@@ -4,6 +4,7 @@ import json
 
 import websockets
 
+
 class SocketIOClient(websockets.WebSocketClientProtocol):
     """WebSocketsClientProtocol implementation that automatically encodes/decodes for socket.io.
 
@@ -16,6 +17,20 @@ class SocketIOClient(websockets.WebSocketClientProtocol):
     Interfaces are compatible with `WebSocketsClientProtocol`.
     """
     SOCKET_IO_CONSTANT = '42'
+
+    async def keepalive(self, ping_interval=3):
+        """Periodically ping the server to prevent the connection from timing out.
+
+        Params:
+            `ping_interval`: number of seconds between each ping.
+
+        SocketIO kills client connections after a pre-configured timeout.  Pings by
+        default occur every 3 seconds.  The snippet itself is copied from
+        http://websockets.readthedocs.io/en/stable/cheatsheet.html#keeping-connections-open
+        """
+        while True:
+            await self.ping()
+            await asyncio.sleep(ping_interval)
 
     @asyncio.coroutine
     def send(self, data, **event_params):

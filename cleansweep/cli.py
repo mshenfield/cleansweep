@@ -23,11 +23,17 @@ def main():
         token_sweeps = []
         for token, sweeps in sweeps_by_token.items():
             max_sweep = max(sweeps, key=lambda s: s.revenue)
-            token_sweeps.append((token, max_sweep.revenue, max_sweep))
+            token_sweeps.append({
+                'ticker': token,
+                'revenue': max_sweep.revenue,
+                'num_tokens': max_sweep.amount_of_tokens_to_buy,
+                'buy_price': max_sweep.buy.price,
+                'sell_price': max_sweep.sell.price,
+            })
 
         pprint.pprint(sorted(
             token_sweeps,
             # Revenue descending
-            key=lambda s: -s[1],
+            key=lambda s: -s['revenue'],
         ))
         time.sleep(10)

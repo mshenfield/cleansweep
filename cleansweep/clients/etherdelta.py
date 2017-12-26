@@ -80,18 +80,19 @@ class EtherDeltaClient(SocketIOClient):
             market = await self.get_market(token_address=token_address)
 
         token_orders = market[MARKET_ORDERS_KEY]
-        sample_order = safe_choice(
+        sample_api_order = safe_choice(
             token_orders[MARKET_ORDERS_BUY_KEY] + token_orders[MARKET_ORDERS_SELL_KEY]
         )
+        sample_order = sample_api_order and EthOrder.from_api_order(sample_api_order)
         token_mismatch = (
             sample_order and
-            EthOrder.from_api_order(sample_order).token_address != token_address
+            sample_order.token_address != token_address
         )
         if token_mismatch:
             raise ValueError(
                 'Received response for different token. Expected {}, Actual {}'.format(
                     token_address,
-                    sample_order[MARKET_ORDERS_TOKEN_GET_KEY]
+                    sample_order.token_address,
                 )
             )
         return token_orders

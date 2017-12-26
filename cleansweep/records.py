@@ -102,32 +102,32 @@ class EthOrder:
     # Last time this Order was updated
     updated = attr.ib()
     # Token being asked for
-    token_get = attr.ib()
+    token_get_address = attr.ib()
     # Token being provided
-    token_give = attr.ib()
+    token_give_address = attr.ib()
 
-    @token_get.validator
+    @token_get_address.validator
     def one_token_is_eth(self, *args, **kwargs):
         """Exactly one of the giving or receiving token is ETH"""
         # `^` is the xor operator - one but not both
         return (
-            (self.token_get == ETHER_TOKEN_ADDRESS) ^
-            (self.token_give == ETHER_TOKEN_ADDRESS)
+            (self.token_get_address == ETHER_TOKEN_ADDRESS) ^
+            (self.token_give_address == ETHER_TOKEN_ADDRESS)
         )
 
     @property
     def token_address(self):
         """Address of the non-ETH token in the trade"""
         if self.order_type == OrderType.SELL:
-            return self.token_give
+            return self.token_give_address
         else:
-            return self.token_get
+            return self.token_get_address
 
     @property
     def order_type(self):
         """The OrderType of the order"""
         # If you're expecting ETH, then you're selling
-        if self.token_get == ETHER_TOKEN_ADDRESS:
+        if self.token_get_address == ETHER_TOKEN_ADDRESS:
             return OrderType.SELL
         else:
             # and otherwise you're expecting to give ETH, and you're buying
@@ -141,8 +141,8 @@ class EthOrder:
             eth_amount=decimal.Decimal(api_order['ethAvailableVolumeBase']),
             price=decimal.Decimal(api_order['price']),
             updated=api_order['updated'],
-            token_get=api_order['tokenGet'],
-            token_give=api_order['tokenGive'],
+            token_get_address=api_order['tokenGet'],
+            token_give_address=api_order['tokenGive'],
         )
 
     @classmethod
