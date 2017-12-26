@@ -1,4 +1,4 @@
-from cleansweep.feed import loop
+from cleansweep import get_sweeps_by_token
 
-def test_loop():
-    loop()
+def test_cleansweep():
+    get_sweeps_by_token()

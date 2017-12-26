@@ -18,6 +18,7 @@ ipdb = "*"
 requests = "*"
 websockets = "*"
 attrs = "*"
+ratelimiter = "*"
 
 
 [requires]

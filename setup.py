@@ -32,7 +32,7 @@ setup(
     # },
     entry_points={
         'console_scripts': [
-            'cleansweep=cleansweep',
+            'cleansweep=cleansweep.cli:main',
         ],
     },
 )
