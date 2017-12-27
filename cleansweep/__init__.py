@@ -10,6 +10,7 @@
         * profit (difference in buy/sell)
 """
 from decimal import Decimal
+import pprint
 
 from cleansweep.constants import (
     logger,
@@ -22,7 +23,23 @@ from cleansweep.records import (
     TokenSnapshot,
 )
 
-async def get_sweeps_by_token():
+def print_maximum_sweep(token, sweeps):
+    if not sweeps:
+        logger.debug('No sweeps for candidate token {}'.format(token.ticker))
+        return
+
+    max_sweep = max(sweeps, key=lambda s: s.revenue)
+
+    pprint.pprint({
+        'ticker': token.ticker,
+        'address': token.address,
+        'revenue': max_sweep.revenue,
+        'num_tokens': max_sweep.amount_of_tokens_to_buy,
+        'buy_price': max_sweep.buy.price,
+        'sell_price': max_sweep.sell.price,
+    })
+
+async def check_for_sweeps():
     async with EtherDeltaClient.connect() as socket:
         market = await socket.get_market()
         sweepable_tokens = [
@@ -38,7 +55,4 @@ async def get_sweeps_by_token():
         for token in sweepable_tokens:
             api_orders = await socket.get_orders_for_token(token_address=token.address)
             sweeps = Sweep.sweeps_from_orders(api_orders)
-            if sweeps:
-                sweeps_by_token[token.ticker] = sweeps
-
-        return sweeps_by_token
+            print_maximum_sweep(token, sweeps)

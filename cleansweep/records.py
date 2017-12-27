@@ -74,7 +74,8 @@ class TokenSnapshot:
         # Use dict for numeric values
         return [
             cls(
-                ticker=ticker,
+                # Comes back "ETH_XXX"
+                ticker=ticker.replace('ETH_', ''),
                 address=token_snapshot['tokenAddr'],
                 # None if are no buy orders
                 buy=none_or_decimal(token_snapshot['bid']),
