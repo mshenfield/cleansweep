@@ -1,7 +1,7 @@
 """Handlers for EtherDelta socket.io API"""
 
 from ratelimiter import RateLimiter
-from socketIO_client import BaseNamespace
+from socketIO_client_nexus import BaseNamespace
 
 from cleansweep.constants import (
     logger,
@@ -39,6 +39,8 @@ class EtherDeltaNamespace(BaseNamespace):
             self.address_to_ticker[token.address] = token.ticker
             # Request `GET_MARKET`
             self.emit(GET_MARKET, token_address=token.address)
+
+        self.emit(GET_MARKET)
 
     def on_market_orders(self, orders):
         """Print from most sweep to least"""

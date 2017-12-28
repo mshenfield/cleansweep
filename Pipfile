@@ -17,7 +17,7 @@ ipdb = "*"
 
 attrs = "*"
 ratelimiter = "*"
-socketio-client = "*"
+socketio-client-nexus = "*"
 
 
 [requires]

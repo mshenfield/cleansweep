@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "95ce94525a1ff1ed24cc8eb1777839092ba5740c6cbc4ad705573264be2f4b7a"
+            "sha256": "9b70bf038e8d7ad4ac0e023a1d4301073f5624e5ca2dd0de643925efc4f5bf44"
         },
         "host-environment-markers": {
             "implementation_name": "cpython",
@@ -78,11 +78,12 @@
             ],
             "version": "==1.11.0"
         },
-        "socketio-client": {
+        "socketio-client-nexus": {
             "hashes": [
-                "sha256:64cd84fba79cf97f28c11e64d1fc42a2221f2d7a4fada05ab381e2d73d74d2c1"
+                "sha256:9f44d705c38e405fcb334f95c1d5d5878a8daabdfeaca3ba56e974b69f42e643",
+                "sha256:41e6aaaff981f6729690f472eb2c7a5d1dda07349077e34444527b9700b0aea5"
             ],
-            "version": "==0.7.2"
+            "version": "==0.7.6"
         },
         "urllib3": {
             "hashes": [
@@ -265,11 +266,12 @@
             ],
             "version": "==1.11.0"
         },
-        "socketio-client": {
+        "socketio-client-nexus": {
             "hashes": [
-                "sha256:64cd84fba79cf97f28c11e64d1fc42a2221f2d7a4fada05ab381e2d73d74d2c1"
+                "sha256:9f44d705c38e405fcb334f95c1d5d5878a8daabdfeaca3ba56e974b69f42e643",
+                "sha256:41e6aaaff981f6729690f472eb2c7a5d1dda07349077e34444527b9700b0aea5"
             ],
-            "version": "==0.7.2"
+            "version": "==0.7.6"
         },
         "traitlets": {
             "hashes": [

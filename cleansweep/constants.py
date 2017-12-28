@@ -10,7 +10,8 @@ ESTIMATED_TRADE_TXN_FEE_ETHER = Decimal('.0004')
 
 ETHER_TOKEN_ADDRESS = '0x0000000000000000000000000000000000000000'
 
-ETHERDELTA_SOCKET_API_HOST = 'socket.etherdelta.com'
+# Pick a particular socket - otherwise we'll lose the session id
+ETHERDELTA_SOCKET_API_URI = 'https://socket03.etherdelta.com'
 # From https://github.com/etherdelta/etherdelta.github.io/blob/master/docs/API.md#user-content-rate-limit
 # This is intentionally lower than the listed limit to avoid getting blocked
 ETHERDELTA_REQUESTS_PER_MINUTE = 10

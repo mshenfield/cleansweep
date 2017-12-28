@@ -22,7 +22,7 @@ setup(
     install_requires=[
         'attrs',
         'ratelimiter',
-        'socketIO_client',
+        'socketIO_client_nexus',
     ],
     extras_require={  # Optional
         'dev': ['ipython', 'ipdb'],
