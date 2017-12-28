@@ -63,10 +63,9 @@ class EtherDeltaClient(SocketIOClient):
                 logger.debug('Skipping non-market event response "{}"'.format(event))
                 continue
 
-            # XXX: Periodically this seems to come back empty, we skip and try again
             if not market:
-                logger.debug('Skipping empty market event response')
-                continue
+                logger.debug('Retrying on empty "{}" event response'.format(MARKET_EVENT_NAME))
+                return await self.get_market(token_address=token_address, user_address=user_address)
 
             return market
 

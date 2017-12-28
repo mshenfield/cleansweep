@@ -9,6 +9,7 @@
         * takers fee
         * profit (difference in buy/sell)
 """
+import asyncio
 from decimal import Decimal
 import pprint
 
@@ -23,16 +24,22 @@ from cleansweep.records import (
     TokenSnapshot,
 )
 
+seen_sweeps = set()
+
 def print_maximum_sweep(token, sweeps):
-    if not sweeps:
-        logger.debug('No sweeps for candidate token {}'.format(token.ticker))
+    new_sweeps = set(sweeps) - seen_sweeps
+    if not new_sweeps:
+        logger.debug('No new sweeps for candidate token {}'.format(token.ticker))
         return
 
-    max_sweep = max(sweeps, key=lambda s: s.revenue)
+    max_sweep = max(new_sweeps, key=lambda s: s.revenue)
+
+    seen_sweeps.add(max_sweep)
 
     pprint.pprint({
         'ticker': token.ticker,
         'address': token.address,
+        'risk_to_reward': max_sweep.risk_per_revenue,
         'revenue': max_sweep.revenue,
         'num_tokens': max_sweep.amount_of_tokens_to_buy,
         'buy_price': max_sweep.buy.price,
@@ -41,18 +48,23 @@ def print_maximum_sweep(token, sweeps):
 
 async def check_for_sweeps():
     async with EtherDeltaClient.connect() as socket:
-        market = await socket.get_market()
-        sweepable_tokens = [
-            token for token in TokenSnapshot.from_market(market)
-            if token.is_sweep_possible
-        ]
+        while True:
+            market = await socket.get_market()
+            sweep_candidates = (
+                token for token in TokenSnapshot.from_market(market)
+                if token.is_sweep_possible
+            )
+            sweep_candidates = sorted(sweep_candidates, key=lambda t: -t.buy_to_sell_ratio)
 
-        logger.info('Sweepable tokens: {}'.format(
-            [(s.ticker, s.buy_to_sell_ratio) for s in sweepable_tokens]
-        ))
+            logger.info('Sweep candidates: {}'.format(
+                [(s.ticker, s.address, s.buy_to_sell_ratio) for s in sweep_candidates]
+            ))
 
-        sweeps_by_token = {}
-        for token in sweepable_tokens:
-            api_orders = await socket.get_orders_for_token(token_address=token.address)
-            sweeps = Sweep.sweeps_from_orders(api_orders)
-            print_maximum_sweep(token, sweeps)
+            sweeps_by_token = {}
+            for token in sweep_candidates:
+                api_orders = await socket.get_orders_for_token(token_address=token.address)
+                sweeps = Sweep.sweeps_from_orders(api_orders)
+                print_maximum_sweep(token, sweeps)
+
+            logger.info('Completed sweep, resting for 10 seconds')
+            await asyncio.sleep(10)
