@@ -22,6 +22,10 @@ from cleansweep.namespace import EtherDeltaNamespace
 
 def run_client():
     """Periodically request `getMarket` and print any sweepable orders"""
-    with SocketIO(host=ETHERDELTA_SOCKET_API_URI, Namepace=EtherDeltaNamespace) as io:
+    with SocketIO(
+        host=ETHERDELTA_SOCKET_API_URI,
+        transports=['websocket'],
+        Namespace=EtherDeltaNamespace,
+    ) as io:
         io.emit(GET_MARKET)
         io.wait()
